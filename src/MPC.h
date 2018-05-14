@@ -9,7 +9,8 @@ using namespace std;
 class MPC {
  public:
   MPC();
-
+   vector<double> mpc_x_vals;
+vector<double> mpc_y_vals;
   virtual ~MPC();
 
   // Solve the model given an initial state and polynomial coefficients.

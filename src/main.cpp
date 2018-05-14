@@ -98,8 +98,28 @@ int main() {
           * Both are in between [-1, 1].
           *
           */
-          double steer_value;
-          double throttle_value;
+
+          for (size_t k = 0; k < ptsx.size(); k++)
+          {
+            double x = ptsx[k] - px;
+            double y = ptsy[k] - py;
+            ptsx[k] = (x * cos(-psi)) - (y * sin(-psi));
+            ptsy[k] = (x * sin(-psi)) + (y * cos(-psi));
+          }
+          px = 0;
+          py = 0;
+          psi = 0;
+
+          Eigen::VectorXd ptsxn = Eigen::VectorXd::Map(ptsx.data(), ptsx.size());
+          Eigen::VectorXd ptsyn = Eigen::VectorXd::Map(ptsy.data(), ptsy.size());
+          auto coeffs = polyfit(ptsxn, ptsyn, 3);
+          double cte = polyeval(coeffs, px) - py;
+          double epsi = psi - atan(coeffs[1] + (2 * coeffs[2] * px) + (3 * coeffs[3] * (px * px)));
+          Eigen::VectorXd state(6);
+          state << px, py, psi, v, cte, epsi;
+          auto vars = mpc.Solve(state, coeffs);
+          double steer_value = -vars[0];
+          double throttle_value = vars[1]; 
 
           json msgJson;
           // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
@@ -108,8 +128,8 @@ int main() {
           msgJson["throttle"] = throttle_value;
 
           //Display the MPC predicted trajectory 
-          vector<double> mpc_x_vals;
-          vector<double> mpc_y_vals;
+          vector<double> mpc_x_vals ;
+          vector<double> mpc_y_vals ;
 
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Green line
@@ -119,13 +139,17 @@ int main() {
 
           //Display the waypoints/reference line
           vector<double> next_x_vals;
-          vector<double> next_y_vals;
-
+          vector<double> next_y_vals; 
+ 
+         for (unsigned i=0 ; i < ptsx.size(); ++i) {
+            next_x_vals.push_back(ptsx[i]);
+            next_y_vals.push_back(ptsy[i]);
+         }
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
 
-          msgJson["next_x"] = next_x_vals;
-          msgJson["next_y"] = next_y_vals;
+          msgJson["next_x"] = ptsx;
+          msgJson["next_y"] = ptsy;
 
 
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
