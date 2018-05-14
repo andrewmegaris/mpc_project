@@ -63,7 +63,7 @@ The model used is a Kinematic model.  This model assume basic inputs only.  No f
 
 ### Timestep Length and Elapsed Duration (N & dt)
 
-The number of points: N and the time interval: dt are used to define the prediction. The number of points interacts with the performance. I tried to keep the horizon around the same time the waypoints were on the simulator. Too few points will not give you the performance required to navigate. Too many points will greatly slow down the controller, and would not be able to recover from some actuations. After trying a range of N from 5, 8, 10, 15, and 20 and dt from 50, 75, 100, 200, and 500 milliseconds, I decided to leave them fixed at 10 and 100 milliseconds.  These values seemed to perform and allow the easiest adjusting of other parameters.
+The number of points: N and the time interval: dt are used to define the prediction. The number of points interacts with the performance.  Too few points will not give you the performance required to navigate. Too many points will greatly slow down the controller, and would not be able to recover from some actuations. After trying a range of N from 5, 8, 10, 15, and 20 and dt from 50, 75, 100, 200, and 500 milliseconds, I decided to leave them fixed at 10 and 100 milliseconds respectively.  These values seemed to perform and allow the easiest adjusting of other parameters.
 
 ### Polynomial Fitting and MPC Preprocessing
 
